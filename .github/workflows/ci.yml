@@ -1,4 +1,4 @@
-name: My First CI Pipeline
+name: My CI + CodeQL Pipeline
 
 on:
   push:
@@ -6,10 +6,14 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  actions: read
+  contents: read
+  security-events: write  # needed for CodeQL to upload results
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -19,9 +23,29 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Simulate Build Step
+      - name: Simulate Build
         run: |
           echo "✅ Code checked out"
           echo "🔧 Installing dependencies..."
           echo "🚀 Building application..."
           echo "🎉 Build successful!"
+
+  codeql-analysis:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    needs: build  # only run after successful build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript  # change if your code is in a different language
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
