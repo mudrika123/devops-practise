@@ -1,0 +1,27 @@
+name: My First CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Simulate Build Step
+        run: |
+          echo "✅ Code checked out"
+          echo "🔧 Installing dependencies..."
+          echo "🚀 Building application..."
+          echo "🎉 Build successful!"
